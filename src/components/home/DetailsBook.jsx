@@ -83,10 +83,10 @@ function DetailsBook() {
                   <FaCartShopping />
                   <span>اضافه الي السله</span>
                 </button>
-                <button className="w-full lg:w-fit justify-center py-4 px-8 text-sm rounded-2xl lg:text-2xl flex items-center gap-1 text-(--whatsapp-color) font-semibold bg-(--whatsapp-color)/20">
+                <a href="https://chat.whatsapp.com/KVWWS9z5wYIEHG2ZYTlin5?mode=hqctcla" target="_blanck" className=" w-full lg:w-fit justify-center py-4 px-8 text-sm rounded-2xl lg:text-2xl flex items-center gap-1 text-(--whatsapp-color) font-semibold bg-(--whatsapp-color)/20">
                   <FaWhatsapp />
                   <span>طلب عبر الواتس اب</span>
-                </button>
+                </a>
               </div>
             </div>
             {/*=== Price and Order ===*/}

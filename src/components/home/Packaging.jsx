@@ -1,26 +1,28 @@
 import { motion } from "motion/react";
 import { useState } from "react";
-function CustomerReviews() {
-  const [countCustomerReviews, setCountCustomerReviews] = useState(4);
+
+function Packaging() {
+  const [countPackaging, setCountPackaging] = useState(4);
   const [showButton, setShowBotton] = useState(true);
   const handleShowPackaging = () => {
-    const count = countCustomerReviews + 4;
-    setCountCustomerReviews(count);
-    if (count >= 20) {
+    const count = countPackaging + 4;
+    setCountPackaging(count);
+    if (count >= 24) {
       setShowBotton(false);
     }
   };
 
-  const review_clients = () => {
+  const packaging = () => {
     return Array.from(
-      { length: countCustomerReviews },
-      (_, index) => `/review_clients/v${index + 1}.webp`,
+      { length: countPackaging },
+      (_, index) => `/Packaging/v${index + 1}.webp`,
     );
   };
+
   return (
-    <section className="py-12">
+    <section className="py-24">
       <div className="container">
-        {/* Head section */}
+        {/* head section */}
         <div className="mb-18">
           <h2
             className="w-fit text-2xl lg:text-4xl mx-auto relative 
@@ -29,13 +31,14 @@ function CustomerReviews() {
             before:transform before:-translate-x-1/2 before:left-1/2
             text-(--head-sec-color)"
           >
-            اراء العملاء
+            التغليف؟
           </h2>
         </div>
-        {/*=== Head section ===*/}
-        {/* Photos */}
+        {/*=== head section ===*/}
+
+        {/* cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {review_clients().map((photo, index) => (
+          {packaging().map((photo, index) => (
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -48,12 +51,11 @@ function CustomerReviews() {
                 src={photo}
                 alt="photo"
                 loading="lazy"
-                className="rounded-2xl"
+                className="rounded-2xl object-cover h-full w-full"
               />
             </motion.div>
           ))}
         </div>
-        {/*=== Photos ===*/}
 
         {/* Show More */}
         {showButton && (
@@ -64,9 +66,12 @@ function CustomerReviews() {
             عرض اكثر
           </button>
         )}
+        {/*=== Show More ===*/}
+
+        {/*=== cards ===*/}
       </div>
     </section>
   );
 }
 
-export default CustomerReviews;
+export default Packaging;

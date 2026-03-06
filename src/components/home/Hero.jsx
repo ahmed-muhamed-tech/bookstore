@@ -1,5 +1,10 @@
 import React from "react";
-import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaMapMarkerAlt,
+  FaWhatsapp,
+} from "react-icons/fa";
 import { motion } from "motion/react";
 const quotes = [
   "في بيت الكتاب، لا تدخل لتقرأ فقط، بل تدخل لتسافر بين عوالم لا يحدها زمان ولا مكان، حيث تحملك الصفحات إلى قصص تُلهم روحك وتوقظ خيالك وتمنحك لحظات من التأمل العميق.",
@@ -24,28 +29,31 @@ const quotes = [
 ];
 
 const bg = [
-  "/bg_hero/v1.webp",
-  "/bg_hero/v2.webp",
-  "/bg_hero/v3.webp",
-  "/bg_hero/v4.webp",
-  "/bg_hero/v5.webp",
-  "/bg_hero/v6.webp",
-  "/bg_hero/v7.webp",
-  "/bg_hero/v8.webp",
+  "/bg_hero/v1.jfif",
+  "/bg_hero/v2.jfif",
+  "/bg_hero/v3.jfif",
+  "/bg_hero/v4.jfif",
+  "/bg_hero/v5.jfif",
+  "/bg_hero/v6.jfif",
+  "/bg_hero/v7.jfif",
+  "/bg_hero/v8.jfif",
+  "/bg_hero/v9.jfif",
 ];
 
 function Hero() {
   function getRandomArbitrary(min, max) {
-    // generate random number from 0 to 1 * الفرق بين الرقمين + min because start from current number than floor result because if result is a float number
     return Math.floor(Math.random() * (max - min) + min);
   }
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0.6 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
       style={{
-        backgroundImage: `url(${bg[getRandomArbitrary(0, 8)]})`,
+        backgroundImage: `url(${bg[getRandomArbitrary(0, 9)]})`,
       }}
-      className={`animate-wiggle h-[calc(100vh-72px)] bg-no-repeat bg-center bg-cover relative before:absolute before:content-[] before:bg-gray-900/50 before:backdrop-blur-xs before:inset-0 before:h-full before:w-full`}
+      className={`animate-wiggle rounded-2xl w-[95%] mx-auto overflow-hidden mt-12 h-[calc(100vh-200px)] bg-no-repeat bg-center bg-cover relative before:absolute before:content-[] before:bg-gray-900/50 before:backdrop-blur-xs before:inset-0 before:h-full before:w-full`}
     >
       <div className="container relative z-10 text-gray-200 h-full flex justify-center items-center">
         <div className="text-center">
@@ -88,28 +96,32 @@ function Hero() {
             className="flex justify-center gap-4 mt-4"
           >
             <a
-              href="#"
-              className="w-8 h-8 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color) hover:bg-(--secondary-bg) transition-all duration-300 text-xl lg:text-3xl"
+              href="https://chat.whatsapp.com/KVWWS9z5wYIEHG2ZYTlin5?mode=hqctcla"
+              target="_blanck"
+              className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color)/60 hover:bg-(--primary-color)/40 transition-all duration-300 text-xl md:text-2xl lg:text-3xl"
             >
               <FaWhatsapp />
             </a>
             <a
-              href="#"
-              className="w-8 h-8 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color) hover:bg-(--secondary-bg) transition-all duration-300 text-xl lg:text-3xl"
+              href="https://www.facebook.com/share/14NZ6AuQHcu/"
+              target="_blanck"
+              className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color)/60 hover:bg-(--primary-color)/40 transition-all duration-300 text-xl md:text-2xl lg:text-3xl"
             >
               <FaFacebookF />
             </a>
             <a
-              href="#"
-              className="w-8 h-8 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color) hover:bg-(--secondary-bg) transition-all duration-300 text-xl lg:text-3xl"
+              href="https://www.instagram.com/beetelketab?igsh=a2xydW54eW9sMmpi"
+              target="_blanck"
+              className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color)/60 hover:bg-(--primary-color)/40 transition-all duration-300 text-xl md:text-2xl lg:text-3xl"
             >
               <FaInstagram />
             </a>
             <a
-              href="#"
-              className="w-8 h-8 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color) hover:bg-(--secondary-bg) transition-all duration-300 text-xl lg:text-3xl"
+              href=" https://maps.app.goo.gl/eCjvXVxCkhLs1xJr9?g_st=com.google.maps.preview.copy"
+              target="_blanck"
+              className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-md flex justify-center items-center  bg-(--primary-color)/60 hover:bg-(--primary-color)/40 transition-all duration-300 text-xl md:text-2xl lg:text-3xl"
             >
-              <FaWhatsapp />
+              <FaMapMarkerAlt />
             </a>
           </motion.div>
 
@@ -133,7 +145,7 @@ function Hero() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

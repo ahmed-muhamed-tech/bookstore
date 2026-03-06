@@ -5,16 +5,12 @@ import { useNavigate } from "react-router-dom";
 const authUserContext = createContext();
 
 const initialDataUser = {
-    email: "",
-    accessToken: "",
-    refreshToken: "",
-  }
+  email: "",
+};
 
 const AuthUserProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(initialDataUser);
-
-  console.log("email: " ,user.email)
 
   const login = async (email, password) => {
     if (email.trim().length === 0 || email === undefined) {
@@ -39,7 +35,6 @@ const AuthUserProvider = ({ children }) => {
 
     if (data.user) {
       navigate("/");
-      console.log(data.user, data.session);
       setUser({
         email: data.user.email,
         accessToken: data.session.access_token,
@@ -53,8 +48,6 @@ const AuthUserProvider = ({ children }) => {
       const { data } = await supabase.auth.getSession();
       setUser({
         email: data.session?.user.email ?? "",
-        accessToken: "",
-        refreshToken: "",
       });
     };
 

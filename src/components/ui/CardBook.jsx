@@ -12,7 +12,7 @@ const handleDescriptionBook = (dis) => {
 };
 
 function CardBook({ image, title, description, price, index, id }) {
-  const {user} = useContext(authUserContext)
+  const { user } = useContext(authUserContext);
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
 
@@ -21,6 +21,32 @@ function CardBook({ image, title, description, price, index, id }) {
   };
 
   const handleDeleteCurrentBook = async (id) => {
+    const { data: book, error: fetchError } = await supabase
+      .from("books")
+      .select("image, title")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !book) {
+      toast.error("تعذر العثور على بيانات الكتاب");
+      return;
+    }
+
+    const imagePublicUrl = book.image;
+    const fileName = imagePublicUrl.split("/").pop();
+
+    const filePath = `covers/${fileName}`;
+
+    const { error: storageError } = await supabase.storage
+      .from("books")
+      .remove([filePath]);
+
+    if (storageError) {
+      console.error("Storage Error:", storageError);
+      toast.error(`خطأ في حذف الصورة: ${storageError.message}`);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("books")
       .delete()
@@ -32,7 +58,7 @@ function CardBook({ image, title, description, price, index, id }) {
       return;
     }
 
-    toast.success(`تم حذف كتاب ${data[0]?.title}`);
+    toast.success(`تم حذف كتاب ${data[0]?.title} بنجاح`);
   };
 
   return (
@@ -48,6 +74,7 @@ function CardBook({ image, title, description, price, index, id }) {
             className="group-hover:scale-110 group-hover:rotate-4 cursor-pointer transition-all duration-300 object-cover w-full h-full"
             src={image}
             alt={title}
+            loading="lazy"
           />
         </div>
 
@@ -72,11 +99,14 @@ function CardBook({ image, title, description, price, index, id }) {
             </div>
           </div>
 
-          {
-            user.email && (
-              <button className="text-center text-lg lg:text-xl bg-red-500 text-gray-300 hover:font-bold transition-all duration-300 rounded-2xl w-full py-2 mt-2" onClick={() => setOpenModal(true)} >حذف الكتاب</button>
-            )
-          }
+          {user.email && (
+            <button
+              className="text-center text-lg lg:text-xl bg-red-500 text-gray-300 hover:font-bold transition-all duration-300 rounded-2xl w-full py-2 mt-2"
+              onClick={() => setOpenModal(true)}
+            >
+              حذف الكتاب
+            </button>
+          )}
         </div>
       </motion.div>
 

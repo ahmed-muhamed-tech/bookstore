@@ -16,6 +16,7 @@ const initialDataBook = {
   rating: "",
   id_category: null,
   name_category: "",
+  is_available: true,
 };
 
 function Dashboard() {
@@ -42,8 +43,41 @@ function Dashboard() {
     fetchCategories();
   }, []);
 
+  const uploadImage = async () => {
+    const imageFile = dataBook.image; // تأكد أن هذا هو ملف الـ File object وليس مجرد رابط
+    if (!imageFile) return null;
+
+    // 1. تصحيح: المتغير كان 'file' وهو غير معرف، الصحيح 'imageFile'
+    const fileExt = imageFile.name.split(".").pop();
+
+    // 2. استخدام UUID أو Timestamp نظيف لتجنب الرموز الغريبة
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `covers/${fileName}`;
+
+    // 3. عملية الرفع
+    const { data, error } = await supabase.storage
+      .from("books")
+      .upload(filePath, imageFile, {
+        cacheControl: "3600",
+        upsert: false, // اجعلها true إذا كنت تريد استبدال الملف بنفس الاسم
+      });
+
+    if (error) {
+      console.error("Storage Upload Error:", error.message);
+      return null;
+    }
+
+    // 4. الحصول على الرابط المباشر
+    const { data: publicUrlData } = supabase.storage
+      .from("books")
+      .getPublicUrl(filePath);
+
+    return publicUrlData.publicUrl;
+  };
+
   const handleAddNewBook = (e) => {
     e.preventDefault();
+
     if (!dataBook.title.trim()) {
       toast.error("يرجي ادخال اسم الكتاب");
       return;
@@ -56,7 +90,7 @@ function Dashboard() {
       toast.error("يرجي ادخال لغه الكتاب");
       return;
     }
-    if (!dataBook.image.trim()) {
+    if (!dataBook.image) {
       toast.error("يرجي ادخال صوره الكتاب");
       return;
     }
@@ -82,6 +116,12 @@ function Dashboard() {
     }
 
     const sendDataIntoDatabase = async () => {
+      const imageUrl = await uploadImage();
+      if (!imageUrl) {
+        toast.error("فشل رفع الصورة");
+        return;
+      }
+
       try {
         const currentData = {
           title: dataBook.title,
@@ -89,13 +129,14 @@ function Dashboard() {
           author: dataBook.author,
           count_pages: dataBook.count_pages,
           publication_year: dataBook.publication_year,
-          image: dataBook.image,
+          image: imageUrl,
           price: dataBook.price,
           discount: dataBook.discount || 0,
           rating: dataBook.rating,
           language: dataBook.language,
           id_category: Number(dataBook.id_category),
           name_category: dataBook.name_category,
+          is_available: true,
         };
 
         const { data, error } = await supabase
@@ -104,10 +145,8 @@ function Dashboard() {
           .select();
 
         if (error) throw error;
-
-        console.log("Inserted Data:", data);
         setDataBook(initialDataBook);
-        toast.success("Book added successfully ✅");
+        if (data) toast.success("تم اضافه الكتاب بنجاح✅");
       } catch (error) {
         if (
           error.message ==
@@ -166,7 +205,7 @@ function Dashboard() {
               <input
                 className="py-4 w-full lg:w-fit px-2 rounded-2xl border flex-1 border-gray-400/50 outline-none hover:border-(--primary-color) transition-all duration-300 focus:border-(--primary-color)"
                 type="number"
-                placeholder="السعر"
+                placeholder="السعر بعد الخصم"
                 name="price"
                 value={dataBook.price}
                 onChange={(e) => fillDataBook(e)}
@@ -174,7 +213,7 @@ function Dashboard() {
               <input
                 className="py-4 w-full lg:w-fit px-2 rounded-2xl border flex-1 border-gray-400/50 outline-none hover:border-(--primary-color) transition-all duration-300 focus:border-(--primary-color)"
                 type="number"
-                placeholder="الخصم ان وجد"
+                placeholder="السعر قبل الخسم"
                 name="discount"
                 value={dataBook.discount}
                 onChange={(e) => fillDataBook(e)}
@@ -217,20 +256,24 @@ function Dashboard() {
                 onChange={(e) => fillDataBook(e)}
               />
             </div>
-            <div className="flex">
+            <div className="flex flex-col  lg:flex-row gap-2">
               <input
-                className="h-22 py-4 px-2 flex-1 rounded-2xl border border-gray-400/50 outline-none hover:border-(--primary-color) transition-all duration-300 focus:border-(--primary-color)"
-                type="text"
-                placeholder="الصوره"
+                type="file"
                 name="image"
-                value={dataBook.image}
-                onChange={(e) => fillDataBook(e)}
+                onChange={(e) =>
+                  setDataBook({
+                    ...dataBook,
+                    image: e.target.files[0],
+                  })
+                }
+               
+                className="flex-1 border border-(--primary-color)/30 rounded-2xl px-2 py-2"
               />
 
-              <div className="w-22 h-22 rounded-2xl mr-4  overflow-hidden">
+              <div className="w-22 h-22 rounded-2xl mr-4  overflow-hidden border border-(--primary-color)/30 px-2 py-2">
                 {dataBook.image ? (
                   <img
-                    src={dataBook.image}
+                    src={URL.createObjectURL(dataBook.image)}
                     alt="photo new book"
                     className="h-full w-full object-cover"
                   />
@@ -258,12 +301,16 @@ function Dashboard() {
               }}
               className="w-full py-4 rounded-2xl border border-gray-500/40 hover:border-(--primary-color) outline-none px-2 focus:border-(--primary-color) transition-all duration-300"
             >
-              <option value="" disabled>اختر تصنيف الكتاب</option>
-              {categories?.filter((category) => category.name != "الكل").map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
+              <option value="" disabled>
+                اختر تصنيف الكتاب
+              </option>
+              {categories
+                ?.filter((category) => category.name != "الكل")
+                .map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
             </select>
 
             <button className="py-4 bg-(--primary-color) text-gray-200 rounded-xl hover:font-bold transition-all duration-300">
