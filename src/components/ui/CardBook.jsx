@@ -98,7 +98,7 @@ function CardBook({ image, title, description, price, index, id }) {
             </div>
           </div>
 
-          {user.email && (
+          {user?.isAdmin && (
             <button
               className="text-center text-lg lg:text-xl bg-red-500 text-gray-300 hover:font-bold transition-all duration-300 rounded-2xl w-full py-2 mt-2"
               onClick={() => setOpenModal(true)}

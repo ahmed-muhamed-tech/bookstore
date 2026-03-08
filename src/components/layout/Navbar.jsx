@@ -6,11 +6,14 @@ import { Link, NavLink } from "react-router-dom";
 import { IoCloseSharp } from "react-icons/io5";
 import { authUserContext } from "../../contexts/AuthUserContext";
 import ConfirmModal from "../ui/ConfirmModal";
+import Loading from "../ui/Loading";
 
 function Navbar() {
   const [isOpenNavLinks, setIsOpenNavLinks] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const { user, logout } = useContext(authUserContext);
+  const { user, logout, isLoading } = useContext(authUserContext);
+
+  if (isLoading) return <Loading />;
 
   return (
     <nav
@@ -45,7 +48,7 @@ function Navbar() {
             >
               الكتب
             </NavLink>
-            {user.email && (
+            {user?.isAdmin  && (
               <NavLink
                 to="/dashboard"
                 className={({ isActive }) =>
@@ -64,7 +67,7 @@ function Navbar() {
         {/* Buttons & search icon */}
         <div className="hidden items-center gap-6 lg:flex">
           <div>
-            {user.email && (
+            {user?.email && (
               <button
                 onClick={() => setOpenModal(true)}
                 className="py-1 px-4 border-red-500 border text-center w-full text-gray-800 hover:bg-red-500 hover:text-gray-200 text-xl rounded-md cursor-pointer hover:scale-95 transition-all duration-300"
@@ -72,7 +75,7 @@ function Navbar() {
                 تسجيل الخروج
               </button>
             )}
-            {!user.email && (
+            {!user?.email && (
               <Link
                 to="/login"
                 className="py-1 px-4 bg-(--primary-color) text-gray-200 text-xl rounded-md cursor-pointer hover:scale-95 transition-all duration-300"
@@ -127,7 +130,7 @@ function Navbar() {
                   >
                     الكتب
                   </NavLink>
-                  {user.email && (
+                  {user?.isAdmin && (
                     <NavLink
                       to="/dashboard"
                       className={({ isActive }) =>
@@ -142,7 +145,7 @@ function Navbar() {
                 </div>
 
                 <div>
-                  {user.email && (
+                  {user?.email && (
                     <button
                       onClick={() => setOpenModal(true)}
                       className="py-1 px-4 border-red-500 border text-center w-full text-gray-200 hover:bg-red-500 hover:text-gray-200 text-xl rounded-md cursor-pointer hover:scale-95 transition-all duration-300"
@@ -150,7 +153,7 @@ function Navbar() {
                       تسجيل الخروج
                     </button>
                   )}
-                  {!user.email && (
+                  {!user?.email && (
                     <Link
                       to="/login"
                       className="py-1 px-4 bg-(--primary-color) text-center w-full text-gray-200 text-xl rounded-md block cursor-pointer hover:scale-95 transition-all duration-300"

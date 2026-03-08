@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom";
 const authUserContext = createContext();
 
 const initialDataUser = {
+  id: "",
   email: "",
+  isAdmin: false,
 };
 
 const AuthUserProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(initialDataUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email, password) => {
     if (email.trim().length === 0 || email === undefined) {
@@ -33,40 +36,56 @@ const AuthUserProvider = ({ children }) => {
       toast.error(error.message);
     }
 
+    const is_admin = data.user.email === import.meta.env.VITE_ADMIN_EMAIL;
+
     if (data.user) {
       navigate("/");
       setUser({
+        id: data.user.id,
         email: data.user.email,
-        accessToken: data.session.access_token,
-        refreshToken: data.session.refresh_token,
+        isAdmin: is_admin,
       });
     }
   };
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setUser({
-        email: data.session?.user.email ?? "",
-      });
+    const initializeAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email,
+          isAdmin: session.user.email === import.meta.env.VITE_ADMIN_EMAIL,
+        });
+      }
+      setIsLoading(false);
     };
 
-    getSession();
+    initializeAuth();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser({
-          email: session?.user.email ?? "",
-          accessToken: "",
-          refreshToken: "",
-        });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email,
+            isAdmin: session.user.email === import.meta.env.VITE_ADMIN_EMAIL,
+          });
+        } else {
+          setUser(null);
+        }
+        setIsLoading(false);
       },
     );
 
     return () => {
-      listener.subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
   }, []);
+
+
 
   const logout = async () => {
     await supabase.auth.signOut();
@@ -75,7 +94,7 @@ const AuthUserProvider = ({ children }) => {
   };
 
   return (
-    <authUserContext.Provider value={{ login, user, logout }}>
+    <authUserContext.Provider value={{ login, user, logout, isLoading }}>
       {children}
     </authUserContext.Provider>
   );

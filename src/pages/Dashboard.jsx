@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaBook } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { supabase } from "../utils/supabaseClient";
+import imageCompression from "browser-image-compression";
 
 const initialDataBook = {
   title: "",
@@ -24,6 +25,7 @@ function Dashboard() {
   const [categories, setCategories] = useState();
   const [dataBook, setDataBook] = useState(initialDataBook);
   const [formKey, setFormKey] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => titleRef.current.focus(), []);
 
   const fillDataBook = (e) => {
@@ -48,28 +50,44 @@ function Dashboard() {
     const imageFile = dataBook.image;
     if (!imageFile) return null;
 
-    const fileExt = imageFile.name.split(".").pop();
+    // إعدادات الضغط
+    const options = {
+      maxSizeMB: 0.1,
+      maxWidthOrHeight: 800,
+      useWebWorker: true,
+      fileType: "image/webp",
+    };
 
-    const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    const filePath = `covers/${fileName}`;
+    try {
+      // 1. ضغط الصورة (تحتاج لاستيراد المكتبة في أعلى الملف)
+      // import imageCompression from 'browser-image-compression';
+      const compressedFile = await imageCompression(imageFile, options);
 
-    const { data, error } = await supabase.storage
-      .from("books")
-      .upload(filePath, imageFile, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+      // 2. إعداد المسار والاسم (نستخدم الامتداد webp دائماً لأننا حولناها)
+      const fileName = `${crypto.randomUUID()}.webp`;
+      const filePath = `covers/${fileName}`;
 
-    if (error) {
-      console.error("Storage Upload Error:", error.message);
+      // 3. الرفع (نمرر compressedFile وليس imageFile)
+      const { data, error } = await supabase.storage
+        .from("books")
+        .upload(filePath, compressedFile, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) throw error;
+
+      // 4. جلب الرابط العام
+      const { data: publicUrlData } = supabase.storage
+        .from("books")
+        .getPublicUrl(filePath);
+
+      return publicUrlData.publicUrl;
+    } catch (error) {
+      console.error("Upload/Compression Error:", error);
+      toast.error("حدث خطأ أثناء معالجة أو رفع الصورة");
       return null;
     }
-
-    const { data: publicUrlData } = supabase.storage
-      .from("books")
-      .getPublicUrl(filePath);
-
-    return publicUrlData.publicUrl;
   };
 
   const handleAddNewBook = async (e) => {
@@ -111,12 +129,13 @@ function Dashboard() {
       toast.error("يرجي ادخال عدد صفحات الكتاب");
       return;
     }
-    if(!dataBook.name_category.trim()){
+    if (!dataBook.name_category.trim()) {
       toast.error("يرجي ادخال التصميف");
       return;
     }
 
     const sendDataIntoDatabase = async () => {
+      setIsSubmitting(true)
       const imageUrl = await uploadImage();
       if (!imageUrl) {
         toast.error("فشل رفع الصورة");
@@ -161,6 +180,7 @@ function Dashboard() {
         console.error(error);
       }
     };
+    setIsSubmitting(false)
     sendDataIntoDatabase();
   };
 
@@ -296,7 +316,6 @@ function Dashboard() {
               onChange={(e) => {
                 const selectedId = e.target.value;
 
-
                 const selectedCategory = categories.find(
                   (cat) => cat.id.toString() === selectedId,
                 );
@@ -321,8 +340,8 @@ function Dashboard() {
                 ))}
             </select>
 
-            <button className="py-4 bg-(--primary-color) text-gray-200 rounded-xl hover:font-bold transition-all duration-300">
-              اضافه الكتاب
+            <button disabled={isSubmitting} className="py-4 bg-(--primary-color) text-gray-200 rounded-xl hover:font-bold transition-all duration-300">
+             {isSubmitting ? "جاري اضافه الكتاب" : "اضافه كتاب"}
             </button>
           </form>
           {/*=== add new book ===*/}
