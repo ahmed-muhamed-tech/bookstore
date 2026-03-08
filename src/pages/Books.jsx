@@ -3,6 +3,7 @@ import CardBook from "../components/ui/CardBook";
 import Loading from "../components/ui/Loading";
 import NotFoundAnyBook from "../components/ui/NotFoundAnyBook";
 import useBooks from "../hooks/useBooks";
+
 function Books() {
   const {
     allBooks,
@@ -10,10 +11,7 @@ function Books() {
     categories,
     loaderRef,
     setTypeBooks,
-    setAllBooks,
-    setPage,
     hasMore,
-    hasFetched,
   } = useBooks();
 
   return (
@@ -21,71 +19,72 @@ function Books() {
       <div className="container">
         {/* Head section */}
         <div>
-          <h2 className="text-4xl mb-2">كتالوج الكتب</h2>
-          <p className="text-sm lg:text-lg leading-8">
+          <h2 className="text-4xl mb-2 font-bold">كتالوج الكتب</h2>
+          <p className="text-sm lg:text-lg text-gray-600 leading-8">
             استكشف مجموعتنا المختارة بعناية من الروايات والكتب العلمية والأدبية
-            التي تثري الفكر
+            التي تثري الفكر.
           </p>
 
-          <div className="flex flex-wrap gap-2 mt-4">
+          {/* أزرار التصنيفات */}
+          <div className="flex flex-wrap gap-2 mt-6">
             <div
-              onClick={() => {
-                setTypeBooks("الكل");
-                setAllBooks([]);
-                setPage(0);
-                hasFetched.current = false;
-              }}
+              onClick={() => setTypeBooks("الكل")}
+              className="cursor-pointer"
             >
               <Button text="الكل" />
             </div>
-            {categories?.map((category, index) => (
+
+            {categories.map((category) => (
               <div
-                key={index}
-                onClick={() => {
-                  setTypeBooks(category.name);
-                  setAllBooks([]);
-                  setPage(0);
-                  hasFetched.current = false;
-                }}
+                key={category.id}
+                onClick={() => setTypeBooks(category.name)}
+                className="cursor-pointer"
               >
-                <Button text={category.name} />
+                <Button
+                  text={category.name}
+                />
               </div>
             ))}
           </div>
         </div>
-        {/*=== Head section ===*/}
-        {/* Content Books */}
+
+        {/* عرض الكتب */}
         <div
-          className={`mt-8 mb-12 ${allBooks.length > 0 ? "grid" : ""} grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`}
+          className={`mt-10 mb-12 ${
+            allBooks.length > 0
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              : "flex justify-center"
+          }`}
         >
           {allBooks.length > 0 ? (
-            allBooks.map((book, index) => {
-              return (
-                <CardBook
-                  key={book.id}
-                  title={book.title}
-                  image={book.image}
-                  index={index}
-                  description={book.description}
-                  price={book.price}
-                  id={book.id}
-                />
-              );
-            })
-          ) : (
-            <NotFoundAnyBook message="لا يوجد اي كتب في هذا القسم بعد" />
-          )}
+            allBooks.map((book, index) => (
+              <CardBook
+                key={book.id}
+                title={book.title}
+                image={book.image}
+                index={index}
+                description={book.description}
+                price={book.price}
+                id={book.id}
+              />
+            ))
+          ) : !isLoading ? (
+            <NotFoundAnyBook message="لا يوجد أي كتب في هذا القسم حالياً" />
+          ) : null}
         </div>
-        {/*=== Content Books ===*/}
 
+      
         {hasMore && (
           <div ref={loaderRef} className="flex justify-center py-10">
-            {isLoading && <Loading text="تحميل المزيد..." />}
+            {isLoading && <Loading text="جاري جلب المزيد من الكتب..." />}
           </div>
         )}
 
-        {!hasMore && (
-          <p className="text-center text-gray-500">لا يوجد كتب أخرى</p>
+    
+        {!hasMore && allBooks.length > 0 && (
+          <p className="text-center text-gray-400 mt-10 italic">
+            — لقد استعرضت جميع الكتب في هذا القسم —
+          </p>
         )}
       </div>
     </section>
