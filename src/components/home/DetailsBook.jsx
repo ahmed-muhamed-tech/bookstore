@@ -15,7 +15,7 @@ function DetailsBook() {
     <section className="py-18 bg-(--secondary-bg)">
       <div className="container flex flex-col lg:flex-row min-h-80 gap-12">
         {/* Images Book */}
-        <div className="p-8 bg-(--primary-color)/10 rounded-2xl lg:w-1/3  mx-auto lg:mx-0 h-100 xl:h-120">
+        <div className="p-8 bg-(--primary-color)/10 rounded-2xl h-100 w-100  mx-auto lg:mx-0">
           <img
             src={currentBook.image}
             alt={currentBook.title}

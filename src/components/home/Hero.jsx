@@ -1,10 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   FaFacebookF,
   FaInstagram,
   FaMapMarkerAlt,
   FaWhatsapp,
 } from "react-icons/fa";
+
+
 import { motion } from "motion/react";
 const quotes = [
   "في بيت الكتاب، لا تدخل لتقرأ فقط، بل تدخل لتسافر بين عوالم لا يحدها زمان ولا مكان، حيث تحملك الصفحات إلى قصص تُلهم روحك وتوقظ خيالك وتمنحك لحظات من التأمل العميق.",
@@ -29,15 +32,15 @@ const quotes = [
 ];
 
 const bg = [
-  "/bg_hero/v1.jfif",
-  "/bg_hero/v2.jfif",
-  "/bg_hero/v3.jfif",
-  "/bg_hero/v4.jfif",
-  "/bg_hero/v5.jfif",
-  "/bg_hero/v6.jfif",
-  "/bg_hero/v7.jfif",
-  "/bg_hero/v8.jfif",
-  "/bg_hero/v9.jfif",
+  "/bg_hero/v1.webp",
+  "/bg_hero/v2.webp",
+  "/bg_hero/v3.webp",
+  "/bg_hero/v4.webp",
+  "/bg_hero/v5.webp",
+  "/bg_hero/v6.webp",
+  "/bg_hero/v7.webp",
+  "/bg_hero/v8.webp",
+  "/bg_hero/v9.webp",
 ];
 
 function Hero() {
@@ -56,6 +59,8 @@ function Hero() {
       className={`animate-wiggle rounded-2xl w-[95%] mx-auto overflow-hidden mt-12 h-[calc(100vh-200px)] bg-no-repeat bg-center bg-cover relative before:absolute before:content-[] before:bg-gray-900/50 before:backdrop-blur-xs before:inset-0 before:h-full before:w-full`}
     >
       <div className="container relative z-10 text-gray-200 h-full flex justify-center items-center">
+        
+
         <div className="text-center">
           <motion.h3
             initial={{ scale: 0 }}
@@ -71,7 +76,7 @@ function Hero() {
             transition={{ duration: 0.6 }}
             className="text-4xl lg:text-6xl font-semibold"
           >
-           بيت الكتاب _ الفيوم
+            بيت الكتاب _ الفيوم
           </motion.h1>
 
           <p className="w-[90%] md:w-[85%] lg:w-[60%] mx-auto text-sm lg:text-lg mt-6 leading-8">
@@ -126,22 +131,12 @@ function Hero() {
           </motion.div>
 
           <div className="mt-8 flex justify-center gap-4 flex-col lg:flex-row">
-            <motion.button
-              initial={{ translateX: 200 }}
-              animate={{ translateX: 0 }}
-              transition={{ duration: 0.6 }}
+            <Link
+              to="/books"
               className="py-2 px-3 lg:py-3 lg:px-6 text-sm lg:text-xl bg-gray-300 text-(--primary-color) rounded-2xl hover:bg-(--primary-color) hover:text-gray-300 transition-all duration-300"
             >
               استكشف الكتب
-            </motion.button>
-            <motion.button
-              initial={{ translateX: -200 }}
-              animate={{ translateX: 0 }}
-              transition={{ duration: 0.6 }}
-              className="py-2 px-3 lg:py-3 lg:px-6 text-sm lg:text-xl bg-(--secondary-bg) rounded-2xl hover:bg-(--primary-color) transition-all duration-300"
-            >
-              تصفح العروض
-            </motion.button>
+            </Link>
           </div>
         </div>
       </div>

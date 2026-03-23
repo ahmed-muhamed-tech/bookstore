@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
 import PrivateRoute from "./contexts/PrivateRoute";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const App = () => {
   const routing = createBrowserRouter([
     {
@@ -19,20 +20,26 @@ const App = () => {
           path: "/books",
           element: <Books />,
         },
-        { path: "/dashboard", element: (
-          <PrivateRoute><Dashboard /></PrivateRoute>
-        ) },
+        {
+          path: "/dashboard",
+          element: (
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          ),
+        },
         { path: "/detailsBook/:id", element: <DetailsBook /> },
         { path: "/login", element: <Login /> },
         { path: "*", element: <NotFound /> },
       ],
     },
   ]);
+  const queryClient = new QueryClient();
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={routing} />
       <ToastContainer position="bottom-right" />
-    </>
+    </QueryClientProvider>
   );
 };
 

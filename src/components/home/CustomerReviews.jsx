@@ -3,6 +3,7 @@ import { useState } from "react";
 function CustomerReviews() {
   const [countCustomerReviews, setCountCustomerReviews] = useState(4);
   const [showButton, setShowBotton] = useState(true);
+
   const handleShowPackaging = () => {
     const count = countCustomerReviews + 4;
     setCountCustomerReviews(count);
@@ -17,6 +18,7 @@ function CustomerReviews() {
       (_, index) => `/review_clients/v${index + 1}.webp`,
     );
   };
+  
   return (
     <section className="py-12">
       <div className="container">

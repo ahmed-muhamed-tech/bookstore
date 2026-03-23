@@ -1,26 +1,21 @@
-import { supabase } from "../utils/supabaseClient";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import fetchCurrentBook from "../services/fetchCurrentBook";
+import { toast } from "react-toastify";
 
 function UseCurrentBook(_id) {
-  const [currentBook, setCurrentBook] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data: currentBook,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["currentBook", _id],
+    queryFn: () => fetchCurrentBook(_id),
+    enabled: !!_id,
+  });
 
-  // fetch current book by id
-  useEffect(() => {
-    const fetchCurrentBook = async () => {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("books")
-        .select("*")
-        .eq("id", _id)
-        .single();
-      data ? setCurrentBook(data) : console.error(error);
-      setIsLoading(false);
-    };
-    fetchCurrentBook();
-  }, []);
+  if (error) toast.error(error.message);
 
-  return {currentBook, isLoading}
+  return { currentBook, isLoading };
 }
 
 export default UseCurrentBook;

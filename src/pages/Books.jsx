@@ -1,18 +1,23 @@
+import { useState } from "react";
 import Button from "../components/ui/Button";
 import CardBook from "../components/ui/CardBook";
 import Loading from "../components/ui/Loading";
 import NotFoundAnyBook from "../components/ui/NotFoundAnyBook";
 import useBooks from "../hooks/useBooks";
+import useCategories from "../hooks/useCategories";
+import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
 
 function Books() {
-  const {
-    allBooks,
-    isLoading,
-    categories,
-    loaderRef,
-    setTypeBooks,
-    hasMore,
-  } = useBooks();
+  const { allBooks, isLoading, loaderRef, setTypeBooks, hasMore } = useBooks(false);
+  const [showMoreCategories, setShowMoreCategories] = useState(false);
+
+  const { isLoadingCategories, categories } = useCategories();
+
+  if (isLoadingCategories) return <Loading text="جاري تحميل التصنيفات" />;
+  if (isLoading) return <Loading text="جاري تحميل الكتب" />;
 
   return (
     <section className="py-12">
@@ -26,7 +31,7 @@ function Books() {
           </p>
 
           {/* أزرار التصنيفات */}
-          <div className="flex flex-wrap gap-2 mt-6">
+          <div className="flex flex-wrap gap-2 mt-6 items-center">
             <div
               onClick={() => setTypeBooks("الكل")}
               className="cursor-pointer"
@@ -34,17 +39,44 @@ function Books() {
               <Button text="الكل" />
             </div>
 
-            {categories.map((category) => (
+            {showMoreCategories &&
+              categories.map((category) => (
+                <div
+                  key={category.id}
+                  onClick={() => setTypeBooks(category.name)}
+                  className="cursor-pointer"
+                >
+                  <Button text={category.name} />
+                </div>
+              ))}
+
+            {!showMoreCategories &&
+              categories.slice(0, 5).map((category) => (
+                <div
+                  key={category.id}
+                  onClick={() => setTypeBooks(category.name)}
+                  className="cursor-pointer"
+                >
+                  <Button text={category.name} />
+                </div>
+              ))}
+
+            {!showMoreCategories && (
               <div
-                key={category.id}
-                onClick={() => setTypeBooks(category.name)}
-                className="cursor-pointer"
+                onClick={() => setShowMoreCategories(!showMoreCategories)}
+                className="flex items-center gap-1 text-xl lg:text-2xl cursor-pointer"
               >
-                <Button
-                  text={category.name}
-                />
+                <MdKeyboardDoubleArrowLeft />
               </div>
-            ))}
+            )}
+            {showMoreCategories && (
+              <div
+                onClick={() => setShowMoreCategories(!showMoreCategories)}
+                className="flex items-center gap-1 text-xl lg:text-2xl cursor-pointer"
+              >
+                <MdKeyboardDoubleArrowRight />
+              </div>
+            )}
           </div>
         </div>
 
@@ -73,14 +105,12 @@ function Books() {
           ) : null}
         </div>
 
-      
         {hasMore && (
           <div ref={loaderRef} className="flex justify-center py-10">
             {isLoading && <Loading text="جاري جلب المزيد من الكتب..." />}
           </div>
         )}
 
-    
         {!hasMore && allBooks.length > 0 && (
           <p className="text-center text-gray-400 mt-10 italic">
             — لقد استعرضت جميع الكتب في هذا القسم —

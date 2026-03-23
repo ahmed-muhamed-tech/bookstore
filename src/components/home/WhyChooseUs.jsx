@@ -54,7 +54,7 @@ function WhyChooseUs() {
                 whileInView={{ opacity: 1, translateY: 0 }}
                 transition={{ delay: 0.1 * index, duration: 0.3 }}
                 key={index}
-                className="text-center bg-(--secondary-bg) p-8 rounded-xl hover:scale-105 transition-all duration-300"
+                className="text-center bg-(--secondary-bg)  p-8 rounded-xl hover:scale-105 transition-all duration-300"
               >
                 <div className="w-fit mx-auto mb-1 text-2xl lg:text-3xl text-(--primary-color)">
                   {card.icon}
