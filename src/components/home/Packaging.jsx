@@ -1,74 +1,70 @@
 import { motion } from "motion/react";
 import { useState } from "react";
+import HeadSection from "../ui/HeadSection";
 
 function Packaging() {
   const [countPackaging, setCountPackaging] = useState(4);
-  const [showButton, setShowBotton] = useState(true);
+  const [showButton, setShowButton] = useState(true);
+
   const handleShowPackaging = () => {
-    const count = countPackaging + 4;
-    setCountPackaging(count);
-    if (count >= 24) {
-      setShowBotton(false);
+    const newCount = countPackaging + 4;
+    setCountPackaging(newCount);
+    if (newCount >= 24) {
+      setShowButton(false);
     }
   };
 
-  const packaging = () => {
-    return Array.from(
-      { length: countPackaging },
-      (_, index) => `/Packaging/v${index + 1}.webp`,
-    );
-  };
+  const packagingImages = Array.from(
+    { length: countPackaging },
+    (_, index) => `/Packaging/v${index + 1}.webp`,
+  );
 
   return (
-    <section className="py-24">
-      <div className="container">
-        {/* head section */}
-        <div className="mb-18">
-          <h2
-            className="w-fit text-2xl lg:text-4xl mx-auto relative 
-            before:content-[''] before:absolute before:-bottom-2 
-            before:bg-(--head-sec-color) before:h-1 before:w-[70%] 
-            before:transform before:-translate-x-1/2 before:left-1/2
-            text-(--head-sec-color)"
-          >
-            التغليف؟
-          </h2>
-        </div>
-        {/*=== head section ===*/}
+    <section className="py-24 bg-(--background)">
+      <div className="container mx-auto px-4">
+        {/* Header */}
+        <HeadSection text="التغليف"/>
 
-        {/* cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {packaging().map((photo, index) => (
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {packagingImages.map((photo, index) => (
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
               key={index}
-              className="p-4 bg-(--secondary-bg) rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              viewport={{ once: true }}
+              className="group overflow-hidden rounded-3xl bg-(--secondary-bg) shadow-sm hover:shadow-xl transition-all duration-300"
             >
-              <img
-                src={photo}
-                alt="photo"
-                loading="lazy"
-                className="rounded-2xl object-cover h-full w-full"
-              />
+              <div className="aspect-square overflow-hidden">
+                <img
+                  src={photo}
+                  alt={`تغليف ${index + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Show More */}
+        {/* Show More Button */}
         {showButton && (
-          <button
-            onClick={handleShowPackaging}
-            className=" w-fit py-2 px-6 text-xl lg:text-2xl bg-(--primary-color)/50 hover:font-semibold rounded-md mx-auto block mt-8 text-gray-800 transition-all duration-300"
-          >
-            عرض اكثر
-          </button>
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={handleShowPackaging}
+              className="group relative px-10 py-4 text-xl font-medium rounded-2xl 
+                         bg-(--primary-color) text-white overflow-hidden 
+                         hover:bg-(--primary-color)/90 transition-all duration-300
+                         flex items-center gap-3"
+            >
+              <span>عرض المزيد</span>
+              <span className="group-hover:rotate-90 transition-transform duration-300">
+                ↓
+              </span>
+            </button>
+          </div>
         )}
-        {/*=== Show More ===*/}
-
-        {/*=== cards ===*/}
       </div>
     </section>
   );

@@ -11,7 +11,8 @@ import {
 } from "react-icons/md";
 
 function Books() {
-  const { allBooks, isLoading, loaderRef, setTypeBooks, hasMore } = useBooks(false);
+  const { allBooks, isLoading, loaderRef, setTypeBooks, hasMore } =
+    useBooks(false);
   const [showMoreCategories, setShowMoreCategories] = useState(false);
 
   const { isLoadingCategories, categories } = useCategories();
@@ -31,35 +32,28 @@ function Books() {
           </p>
 
           {/* أزرار التصنيفات */}
-          <div className="flex flex-wrap gap-2 mt-6 items-center">
-            <div
-              onClick={() => setTypeBooks("الكل")}
-              className="cursor-pointer"
-            >
-              <Button text="الكل" />
-            </div>
+          <div className="flex flex-wrap gap-6 mt-6 items-center">
+            <Button text="الكل" action={() => setTypeBooks("الكل")} />
 
             {showMoreCategories &&
               categories.map((category) => (
-                <div
-                  key={category.id}
-                  onClick={() => setTypeBooks(category.name)}
-                  className="cursor-pointer"
-                >
-                  <Button text={category.name} />
-                </div>
+                <Button
+                  key={1}
+                  text={category.name}
+                  action={() => setTypeBooks(category.name)}
+                />
               ))}
 
             {!showMoreCategories &&
-              categories.slice(0, 5).map((category) => (
-                <div
-                  key={category.id}
-                  onClick={() => setTypeBooks(category.name)}
-                  className="cursor-pointer"
-                >
-                  <Button text={category.name} />
-                </div>
-              ))}
+              categories
+                .slice(0, 5)
+                .map((category) => (
+                  <Button
+                    key={1}
+                    text={category.name}
+                    action={() => setTypeBooks(category.name)}
+                  />
+                ))}
 
             {!showMoreCategories && (
               <div
@@ -92,6 +86,7 @@ function Books() {
             allBooks.map((book, index) => (
               <CardBook
                 key={book.id}
+                discount={book.discount}
                 title={book.title}
                 image={book.image}
                 index={index}

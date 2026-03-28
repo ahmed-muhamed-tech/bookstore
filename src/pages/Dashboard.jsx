@@ -1,91 +1,137 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import FormAddNewBook from "../components/ui/FormAddNewBook";
 import CardBookInDashboard from "../components/ui/CardBookInDashboard";
-import { motion } from "motion/react";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import { motion, AnimatePresence } from "motion/react";
+import { IoClose } from "react-icons/io5";
+import { FiPlus } from "react-icons/fi";
+import { FaBookOpen, FaTags } from "react-icons/fa";
 import useBooks from "../hooks/useBooks";
 import Loading from "../components/ui/Loading";
+
 function Dashboard() {
   const { allBooks, isLoading, loaderRef, hasMore } = useBooks(true);
-
   const [showFormAddBook, setShowFormAddBook] = useState(false);
-  if (isLoading) {
-    return <Loading text="جاري جلب الكتب" />;
-  }
+
+  if (isLoading) return <Loading text="جاري جلب الكتب..." />;
+
   return (
-    <div className="py-12">
-      {showFormAddBook && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="fixed z-50 transform top-1/2 left-1/2  -translate-x-1/2 -translate-y-1/2 w-full"
-        >
-          <div className="container relative">
-            <span
-              onClick={() => setShowFormAddBook(!showFormAddBook)}
-              className="text-xl md:text-2xl lg:text-3xl z-50 text-gray-200 rounded-full cursor-pointer hover:scale-95 transition-all duration-300 absolute top-3 right-12 bg-red-500"
+    <div className="py-12 min-h-screen bg-gray-50">
+      {/* ==================== Modal (Popup) ==================== */}
+      <AnimatePresence>
+        {showFormAddBook && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md"
+              onClick={() => setShowFormAddBook(false)}
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 40 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
-              <IoCloseCircleOutline />
-            </span>
-            <FormAddNewBook />{" "}
-          </div>
-        </motion.div>
-      )}
-      <div className="container flex flex-col gap-2 ">
-        <div className="flex flex-col lg:flex-row gap-4 text-center lg:text-start  justify-between items-center mb-12">
-          <div className="flex flex-col gap-3">
-            <div>
-              <h2 className="text-3xl">اداره الكتب</h2>
-              <p className="text-sm">تحكم في مكتبتك الرقميه بكل سهوله وهدوء.</p>
-            </div>
-            <button
-              onClick={() => setShowFormAddBook(!showFormAddBook)}
-              className="bg-(--primary-color) text-gray-300 py-2 px-6 text-lg md:text-xl lg:text-2xl rounded-md"
-            >
-              اضافه كتاب جديد
-            </button>
+              <div className="relative w-full max-w-4xl">
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowFormAddBook(false)}
+                  className="absolute -top-4 -right-4 z-50 bg-white text-gray-500 hover:text-red-500 hover:bg-red-50 w-11 h-11 flex items-center justify-center rounded-full shadow-lg border border-gray-100 transition-all hover:scale-110"
+                >
+                  <IoClose size={28} />
+                </button>
+
+                {/* Form Container */}
+                <div className="bg-white rounded-3xl shadow-2xl w-full overflow-hidden">
+                  <FormAddNewBook />
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <div className="container mx-auto px-4">
+        {/* Header Section */}
+        <div className="flex flex-col text-center lg:text-start lg:flex-row gap-6 justify-between items-center mb-10">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">إدارة الكتب</h1>
+            <p className="text-gray-500 mt-2 text-lg">
+              تحكم في جميع الكتب الموجودة في المكتبة بكل سهولة
+            </p>
           </div>
 
-          <div className="flex gap-3 items-center">
-            <div className="p-6 rounded-xl bg-(--secondary-bg) flex flex-col justify-center items-center">
-              <h2 className="text-2xl font-semibold">اجمالي الكتب</h2>
-              <h3 className="text-xl font-medium">1293</h3>
-            </div>
-            <div className="p-6 rounded-xl bg-(--secondary-bg) flex flex-col justify-center items-center">
-              <h2 className="text-2xl font-semibold">اجمالي التصنيفات</h2>
-              <h3 className="text-xl font-medium">12</h3>
-            </div>
-          </div>
+          {/* Add Book Button */}
+          <button
+            onClick={() => setShowFormAddBook(true)}
+            className="inline-flex items-center gap-3 bg-(--primary-color) hover:bg-(--primary-color)/90 text-white font-semibold text-lg px-8 py-4 rounded-2xl transition-all active:scale-95 shadow-lg"
+          >
+            <FiPlus className="text-2xl" />
+            إضافة كتاب جديد
+          </button>
         </div>
 
-        <div className="grid grid-cols-5 gap-5 text-sm md:text-xl lg:text-2xl bg-(--primary-color)/20 p-4 rounded-2xl">
-          <h2>العنوان</h2>
-          <h2>التصنيف</h2>
-          <h2>السعر</h2>
-          <h2>هل متاح</h2>
-          <h2>التعديل/الحذف</h2>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {[
+            { label: "إجمالي الكتب", value: "1,293", icon: <FaBookOpen /> },
+            { label: "إجمالي التصنيفات", value: "12", icon: <FaTags /> },
+          ].map(({ label, value, icon }, i) => (
+            <div
+              key={i}
+              className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:border-(--primary-color)/30 transition-all flex items-center gap-5"
+            >
+              <div className="w-14 h-14 bg-(--primary-color)/10 text-(--primary-color) rounded-2xl flex items-center justify-center text-3xl">
+                {icon}
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-gray-900">{value}</div>
+                <div className="text-sm text-gray-500 mt-1">{label}</div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {allBooks.map((book) => (
-          <CardBookInDashboard
-            key={book.id}
-            category={book.name_category}
-            title={book.title}
-            author={book.author}
-            image={book.image}
-            price={book.price}
-            isValid={book.is_available}
-            id={book.id}
-          />
-        ))}
+        {/* Table Header */}
+        <div className="hidden lg:grid grid-cols-5 gap-4 bg-white border border-gray-200 px-6 py-4 rounded-2xl text-sm font-semibold text-gray-600 mb-3">
+          <div>العنوان</div>
+          <div>التصنيف</div>
+          <div>السعر</div>
+          <div>متاح/غير متاح</div>
+          <div>الإجراءات</div>
+        </div>
 
-        <div ref={loaderRef}></div>
-        {hasMore && <Loading text="جاري جلب المزيد من الكتب" />}
+        {/* Books List */}
+        <div className="flex flex-col gap-3">
+          {allBooks.map((book) => (
+            <CardBookInDashboard
+              key={book.id}
+              category={book.name_category}
+              title={book.title}
+              author={book.author}
+              image={book.image}
+              price={book.price}
+              isValid={book.is_available}
+              id={book.id}
+            />
+          ))}
+        </div>
+
+        {/* Infinite Scroll Loader */}
+        <div ref={loaderRef} className="py-8" />
+        
+        {hasMore && <Loading text="جاري تحميل المزيد من الكتب..." />}
+        
         {!hasMore && allBooks.length > 0 && (
-          <p className="text-center text-gray-400 mt-10 italic">
-            — لقد استعرضت جميع الكتب في هذا القسم —
-          </p>
+          <div className="text-center py-12 text-gray-400">
+            ✦ تم تحميل جميع الكتب ✦
+          </div>
         )}
       </div>
     </div>

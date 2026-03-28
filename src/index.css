@@ -15,7 +15,9 @@
   font-display: swap;
 }
 
-
+.swiper-wrapper {
+  transition-timing-function: linear !important;
+}
 
 body {
   font-family: 'Cairo';

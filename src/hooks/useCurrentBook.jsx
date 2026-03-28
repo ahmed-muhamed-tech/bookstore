@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchCurrentBook from "../services/fetchCurrentBook";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 function UseCurrentBook(_id) {
   const {
@@ -13,7 +14,9 @@ function UseCurrentBook(_id) {
     enabled: !!_id,
   });
 
-  if (error) toast.error(error.message);
+  useEffect(() => {
+    if (error) toast.error(error.message);
+  }, [error]);
 
   return { currentBook, isLoading };
 }

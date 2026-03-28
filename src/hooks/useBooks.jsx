@@ -15,7 +15,8 @@ function useBooks(isDashboard) {
 
     let query = supabase
       .from("books")
-      .select("id,title,image,description,price,author,is_available,name_category")
+      // .select("id,title,image,description,price,author,is_available,name_category")
+      .select("*")
       .order("created_at", { ascending: false })
       .range(from, to);
 
@@ -42,6 +43,8 @@ function useBooks(isDashboard) {
   } = useInfiniteQuery({
     queryKey: ["books", typeBooks],
     queryFn: fetchBooks,
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 25,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.length < LIMIT ? undefined : allPages.length;

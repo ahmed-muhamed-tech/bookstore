@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { FiMenu } from "react-icons/fi";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import Logo from "../ui/Logo";
 import { Link, NavLink } from "react-router-dom";
 import { IoCloseSharp } from "react-icons/io5";
@@ -16,147 +16,130 @@ function Navbar() {
   if (isLoading) return <Loading />;
 
   return (
-    <nav
-      className="h-18 flex items-center justify-between relative
-    "
-    >
-      <div className="container flex items-center justify-between">
-        <div className="flex gap-12 items-center">
-          {/* Logo */}
-          <Logo />
-          {/*=== Logo ===*/}
+    <>
+      <nav className="h-18 flex items-center justify-between relative z-50">
+        <div className="container flex items-center justify-between">
+          <div className="flex gap-12 items-center">
+            {/* Logo */}
+            <Logo />
 
-          {/* Nav Link */}
-          <div className="items-center gap-4 text-lg lg:text-xl hidden lg:flex">
-            <NavLink
-              to=""
-              className={({ isActive }) =>
-                `py-3 px-4 rounded-md transition-all duration-300 
-                  hover:bg-(--primary-color) hover:text-gray-200
-                  ${isActive ? "bg-(--primary-color) text-gray-200" : ""}`
-              }
-            >
-              الرئيسيه
-            </NavLink>
-            <NavLink
-              to="/books"
-              className={({ isActive }) =>
-                `py-3 px-4 rounded-md transition-all duration-300 
-                  hover:bg-(--primary-color) hover:text-gray-200
-                  ${isActive ? "bg-(--primary-color) text-gray-200" : ""}`
-              }
-            >
-              الكتب
-            </NavLink>
-            {user?.isAdmin  && (
-              <NavLink
-                to="/dashboard"
-                className={({ isActive }) =>
-                  `py-3 px-4 rounded-md transition-all duration-300 
-                  hover:bg-(--primary-color) hover:text-gray-200
-                  ${isActive ? "bg-(--primary-color) text-gray-200" : ""}`
-                }
-              >
-                لوحه التحكم
-              </NavLink>
-            )}
+            {/* Nav Links - Desktop */}
+            <div className="items-center gap-1 text-lg lg:text-xl hidden lg:flex">
+              {[
+                { to: "", label: "الرئيسيه" },
+                { to: "/books", label: "الكتب" },
+                ...(user?.isAdmin
+                  ? [{ to: "/dashboard", label: "لوحه التحكم" }]
+                  : []),
+              ].map(({ to, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    `py-2 px-5 rounded-xl text-base font-medium transition-all duration-300
+                    hover:bg-(--primary-color) hover:text-white
+                    ${
+                      isActive
+                        ? "bg-(--primary-color) text-white shadow-md"
+                        : "text-gray-700 hover:shadow-md"
+                    }`
+                  }
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </div>
           </div>
-          {/*=== Nav Link ===*/}
-        </div>
 
-        {/* Buttons & search icon */}
-        <div className="hidden items-center gap-6 lg:flex">
-          <div>
-            {user?.email && (
+          {/* Auth Button - Desktop */}
+          <div className="hidden items-center gap-6 lg:flex">
+            {user?.email ? (
               <button
                 onClick={() => setOpenModal(true)}
-                className="py-1 px-4 border-red-500 border text-center w-full text-gray-800 hover:bg-red-500 hover:text-gray-200 text-xl rounded-md cursor-pointer hover:scale-95 transition-all duration-300"
+                className="py-2 px-5 text-sm font-medium border border-red-400 text-red-500 rounded-xl hover:bg-red-500 hover:text-white hover:border-transparent hover:shadow-lg transition-all duration-300"
               >
                 تسجيل الخروج
               </button>
-            )}
-            {!user?.email && (
+            ) : (
               <Link
                 to="/login"
-                className="py-1 px-4 bg-(--primary-color) text-gray-200 text-xl rounded-md cursor-pointer hover:scale-95 transition-all duration-300"
+                className="py-2 px-5 text-sm font-medium bg-(--primary-color) text-white rounded-xl hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
                 تسجيل الدخول
               </Link>
             )}
           </div>
-        </div>
-        {/*=== Buttons & search icon ===*/}
 
-        {/* Show just in phone */}
-        <>
-          {/* Menu */}
-          <motion.div
+          {/* Hamburger - Mobile */}
+          <motion.button
             initial={false}
-            animate={{ scale: isOpenNavLinks ? 0.8 : 1 }}
-            transition={{ duration: 0.3 }}
-            className="text-2xl lg:hidden cursor-pointer "
+            animate={{ rotate: isOpenNavLinks ? 90 : 0 }}
+            transition={{ duration: 0.25 }}
+            className="text-2xl lg:hidden cursor-pointer p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
             onClick={() => setIsOpenNavLinks(!isOpenNavLinks)}
+            aria-label="Toggle menu"
           >
             {isOpenNavLinks ? <IoCloseSharp /> : <FiMenu />}
-          </motion.div>
-          {/*=== Menu ===*/}
+          </motion.button>
+        </div>
 
+        {/* Mobile Menu */}
+        <AnimatePresence>
           {isOpenNavLinks && (
             <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden z-50 lg:hidden bg-(--primary-color)/30 backdrop-blur-2xl absolute top-full w-full left-0 py-4"
+              key="mobile-menu"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="absolute top-full w-full left-0 z-50 lg:hidden"
             >
-              <div className="container">
-                <div className="flex flex-col gap-2 text-gray-200 my-4">
-                  <NavLink
-                    to=""
-                    className={({ isActive }) =>
-                      `w-full text-start py-3 px-4 rounded-md hover:text-(--primary-color) hover:bg-gray-200 transition-all duration-300
-                  ${isActive ? "text-(--primary-color) bg-gray-200" : ""}`
-                    }
-                    onClick={() => setIsOpenNavLinks(false)}
-                  >
-                    الرئيسيه
-                  </NavLink>
-                  <NavLink
-                    to="/books"
-                    className={({ isActive }) =>
-                      `w-full text-start py-3 px-4 rounded-md hover:text-(--primary-color) hover:bg-gray-200 transition-all duration-300
-                  ${isActive ? "text-(--primary-color) bg-gray-200" : ""}`
-                    }
-                    onClick={() => setIsOpenNavLinks(false)}
-                  >
-                    الكتب
-                  </NavLink>
-                  {user?.isAdmin && (
-                    <NavLink
-                      to="/dashboard"
-                      className={({ isActive }) =>
-                        `w-full text-start py-3 px-4 rounded-md hover:text-(--primary-color) hover:bg-gray-200 transition-all duration-300
-                  ${isActive ? "text-(--primary-color) bg-gray-200" : ""}`
-                      }
-                      onClick={() => setIsOpenNavLinks(false)}
-                    >
-                      لوحه التحكم
-                    </NavLink>
-                  )}
-                </div>
+              {/* Glass card */}
+              <div className="mx-3 mt-1 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl overflow-hidden">
+                <div className="container py-4">
+                  {/* Nav Links */}
+                  <div className="flex flex-col gap-1 mb-4">
+                    {[
+                      { to: "", label: "الرئيسيه" },
+                      { to: "/books", label: "الكتب" },
+                      ...(user?.isAdmin
+                        ? [{ to: "/dashboard", label: "لوحه التحكم" }]
+                        : []),
+                    ].map(({ to, label }) => (
+                      <NavLink
+                        key={to}
+                        to={to}
+                        className={({ isActive }) =>
+                          `w-full text-start py-3 px-4 rounded-xl font-medium transition-all duration-200
+                          ${
+                            isActive
+                              ? "bg-(--primary-color) text-white shadow-sm"
+                              : "text-gray-700 hover:bg-(--primary-color)/10 hover:text-(--primary-color)"
+                          }`
+                        }
+                        onClick={() => setIsOpenNavLinks(false)}
+                      >
+                        {label}
+                      </NavLink>
+                    ))}
+                  </div>
 
-                <div>
-                  {user?.email && (
+                  {/* Divider */}
+                  <div className="h-px bg-gray-200 mb-4" />
+
+                  {/* Auth Button */}
+                  {user?.email ? (
                     <button
                       onClick={() => setOpenModal(true)}
-                      className="py-1 px-4 border-red-500 border text-center w-full text-gray-200 hover:bg-red-500 hover:text-gray-200 text-xl rounded-md cursor-pointer hover:scale-95 transition-all duration-300"
+                      className="w-full py-2.5 px-4 text-sm font-medium border border-red-400 text-red-500 rounded-xl hover:bg-red-500 hover:text-white hover:border-transparent transition-all duration-300"
                     >
                       تسجيل الخروج
                     </button>
-                  )}
-                  {!user?.email && (
+                  ) : (
                     <Link
                       to="/login"
-                      className="py-1 px-4 bg-(--primary-color) text-center w-full text-gray-200 text-xl rounded-md block cursor-pointer hover:scale-95 transition-all duration-300"
+                      className="block w-full text-center py-2.5 px-4 text-sm font-medium bg-(--primary-color) text-white rounded-xl hover:opacity-90 transition-all duration-300"
+                      onClick={() => setIsOpenNavLinks(false)}
                     >
                       تسجيل الدخول
                     </Link>
@@ -165,9 +148,8 @@ function Navbar() {
               </div>
             </motion.div>
           )}
-        </>
-        {/*=== Show just in phone ===*/}
-      </div>
+        </AnimatePresence>
+      </nav>
 
       {/* Confirm Modal */}
       <ConfirmModal
@@ -177,7 +159,7 @@ function Navbar() {
         title="تسجيل الخروج"
         message="هل أنت متأكد أنك تريد تسجيل الخروج؟"
       />
-    </nav>
+    </>
   );
 }
 
