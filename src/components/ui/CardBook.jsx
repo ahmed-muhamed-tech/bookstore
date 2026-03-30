@@ -1,18 +1,29 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
+import { useContext } from "react";
+import { itemsCartContext } from "../../contexts/itemsCartContext";
+import { FiInfo, FiShoppingCart } from "react-icons/fi";
 
-function CardBook({ image, title, description, price, index, id,discount }) {
+function CardBook({
+  image,
+  title,
+  description,
+  price,
+  index,
+  id,
+  discount,
+  category,
+  author,
+}) {
+  const { addNewItem } = useContext(itemsCartContext);
   const handleDescriptionBook = (dis) => {
     return dis.split("").slice(0, 120).join("");
   };
 
   // حساب نسبة الخصم
   const discountPercent = discount
-    ? Math.round(
-        ((discount - price) / discount) *
-          100,
-      )
+    ? Math.round(((discount - price) / discount) * 100)
     : 0;
 
   const navigate = useNavigate();
@@ -20,7 +31,9 @@ function CardBook({ image, title, description, price, index, id,discount }) {
     navigate(`/detailsBook/${id}`);
   };
 
-  console.log(discount)
+  const addCurrentBookToCart = (image, title, author, price, category) => {
+    addNewItem(image, title, author, price, category);
+  };
 
   return (
     <motion.div
@@ -32,7 +45,7 @@ function CardBook({ image, title, description, price, index, id,discount }) {
         border border-transparent hover:border-(--primary-color)/20
         hover:shadow-xl transition-all duration-300 flex flex-col"
     >
-      {discount > 0  && (
+      {discount > 0 && (
         <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
           خصم {discountPercent}%
         </span>
@@ -63,7 +76,12 @@ function CardBook({ image, title, description, price, index, id,discount }) {
       </h4>
 
       {/* Content */}
-      <div className="px-4 py-4 flex flex-col flex-1">
+      <div className="px-4 py-4 flex flex-col flex-1 relative">
+        {/* <div className="absolute bottom-full w-full bg-gray-100 left-0 py-4 px-2 text-2xl">
+          اضافه الي السله
+          
+        </div> */}
+
         <h3 className="text-base lg:text-lg font-bold text-(--head-sec-color) leading-snug mb-2">
           {title}
         </h3>
@@ -81,8 +99,26 @@ function CardBook({ image, title, description, price, index, id,discount }) {
             </span>
           </div>
 
-          <div onClick={() => handleGoToCurrentBook(id)}>
-            <Button text="تفاصيل" />
+          <div className="flex items-center gap-2">
+            {/* زر إضافة للسلة - أيقونة احترافية */}
+            <button
+              onClick={() =>
+                addCurrentBookToCart(image, title, author, price, category)
+              }
+              title="إضافة للسلة"
+              className="p-2.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-(--primary-color) hover:text-white transition-all duration-300 active:scale-90"
+            >
+              <FiShoppingCart size={20} />
+            </button>
+
+            {/* زر تفاصيل أكثر - بشكل بارز */}
+            <button
+              onClick={() => handleGoToCurrentBook(id)}
+              className="flex items-center gap-2 bg-(--primary-color) text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-(--primary-color)/90 shadow-lg shadow-(--primary-color)/20 transition-all duration-300 active:scale-95"
+            >
+              <span>التفاصيل</span>
+              <FiInfo size={16} />
+            </button>
           </div>
         </div>
       </div>

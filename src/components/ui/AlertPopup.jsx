@@ -25,8 +25,6 @@ function AlertPopup({ isOpen, onClose, title, message }) {
             <h3 className="text-xl font-bold text-gray-900">{title}</h3>
             <p className="mt-3 text-gray-500">{message}</p>
           </div>
-
-        
         </motion.div>
       </div>
     </AnimatePresence>

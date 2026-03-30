@@ -1,8 +1,6 @@
 import {
   FaStar,
   FaWhatsapp,
-  FaHeart,
-  FaShareAlt,
   FaBook,
   FaLanguage,
   FaCalendarAlt,
@@ -10,19 +8,17 @@ import {
 } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
-
+import { useContext } from "react";
 import Loading from "../ui/Loading";
 import UseCurrentBook from "../../hooks/useCurrentBook";
-import AlertPopup from "../ui/AlertPopup";
+import { itemsCartContext } from "../../contexts/itemsCartContext";
 
 function DetailsBook() {
   const { id } = useParams();
   const { currentBook, isLoading } = UseCurrentBook(id);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const { addNewItem } = useContext(itemsCartContext);
 
-  if (isLoading) return <Loading text="جاري تحميل تفاصيل الكتاب ✨" />;
+  if (isLoading) return <Loading text="جاري تحميل تفاصيل الكتاب" />;
 
   // حساب نسبة الخصم
   const discountPercent = currentBook.discount
@@ -32,11 +28,40 @@ function DetailsBook() {
       )
     : 0;
 
+  const addCurrentBookToCart = (image, title, author, price, category) => {
+    addNewItem(image, title, author, price, category);
+  };
+
+  const handleWhatsAppOrder = (bookTitle, bookAuthor, bookPrice, category) => {
+    const phoneNumber = "201018197768";
+
+    const message = `*طلب كتاب جديد*
+                      ━━━━━━━━━━━━━━━
+                      *اسم الكتاب:*
+                      ${bookTitle}
+                      *اسم الكاتب:*
+                      ${bookAuthor}
+                      *القسم:*
+                      ${category}
+                      *السعر:*
+                      ${bookPrice} جنيه
+                      ━━━━━━━━━━━━━━━
+                      *شكراً لاختياركم*
+                      بيت كتاب الفيوم`;
+
+    const encodedMessage = encodeURIComponent(message.trim());
+
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
+      "_blank",
+    );
+  };
+
   return (
     <section className="py-12 md:py-20 bg-linear-to-b from-(--secondary-bg) to-transparent">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-          {/* 📚 صورة الكتاب - مع تأثيرات */}
+          {/*صورة الكتاب  */}
           <div className="w-full lg:w-1/3 flex flex-col items-center">
             <div className="relative group w-full max-w-sm">
               {/* Badge الخصم */}
@@ -55,35 +80,11 @@ function DetailsBook() {
                   loading="lazy"
                 />
                 {/* Overlay عند التحويم */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-
-              {/* أزرار سريعة فوق الصورة */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
-                <button
-                  onClick={() => setIsWishlisted(!isWishlisted)}
-                  className={`p-3 rounded-full shadow-lg transition-all duration-300 ${
-                    isWishlisted
-                      ? "bg-red-500 text-white scale-110"
-                      : "bg-white/90 text-gray-700 hover:bg-red-50 hover:text-red-500"
-                  }`}
-                  aria-label={
-                    isWishlisted ? "إزالة من المفضلة" : "إضافة للمفضلة"
-                  }
-                >
-                  <FaHeart className={isWishlisted ? "animate-pulse" : ""} />
-                </button>
-                <button
-                  className="p-3 rounded-full bg-white/90 text-gray-700 hover:bg-(--primary-color) hover:text-white shadow-lg transition-all duration-300"
-                  aria-label="مشاركة الكتاب"
-                >
-                  <FaShareAlt />
-                </button>
               </div>
             </div>
           </div>
 
-          {/* 📋 تفاصيل الكتاب */}
+          {/*  تفاصيل الكتاب */}
           <div className="w-full lg:w-2/3 space-y-6">
             {/* العنوان والتقييم */}
             <div className="space-y-4">
@@ -140,22 +141,35 @@ function DetailsBook() {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => setIsPopupOpen(true)}
+                  onClick={() =>
+                    addCurrentBookToCart(
+                      currentBook.image,
+                      currentBook.title,
+                      currentBook.author,
+                      currentBook.price,
+                      currentBook.name_category,
+                    )
+                  }
                   className="group flex-1 sm:flex-none justify-center py-4 px-8 bg-linear-to-r from-(--primary-color) to-(--primary-color)/90 hover:from-(--primary-color)/90 hover:to-(--primary-color) text-white font-bold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-3 text-lg"
                 >
                   <FaCartShopping className="group-hover:scale-110 transition-transform" />
                   <span>أضف للسلة</span>
                 </button>
 
-                <a
-                  href="https://wa.me/201018197768"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() =>
+                    handleWhatsAppOrder(
+                      currentBook.title,
+                      currentBook.author,
+                      currentBook.price,
+                      currentBook.name_category,
+                    )
+                  }
                   className="group flex-1 sm:flex-none justify-center py-4 px-8 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] font-bold rounded-2xl transition-all duration-300 border-2 border-[#25D366]/30 hover:border-[#25D366] flex items-center gap-3 text-lg"
                 >
                   <FaWhatsapp className="group-hover:scale-110 transition-transform text-2xl" />
                   <span>اطلب عبر واتساب</span>
-                </a>
+                </button>
               </div>
             </div>
 
@@ -199,12 +213,6 @@ function DetailsBook() {
             </div>
           </div>
         </div>
-        <AlertPopup
-          isOpen={isPopupOpen}
-          onClose={() => setIsPopupOpen(false)}
-          title="تنبيه: هام "
-          message="هذه الاضافه لم تعمل بعد ستكون متوفرق قريبا..."
-        />
       </div>
     </section>
   );

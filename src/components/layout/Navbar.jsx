@@ -7,11 +7,14 @@ import { IoCloseSharp } from "react-icons/io5";
 import { authUserContext } from "../../contexts/AuthUserContext";
 import ConfirmModal from "../ui/ConfirmModal";
 import Loading from "../ui/Loading";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { itemsCartContext } from "../../contexts/itemsCartContext";
 
 function Navbar() {
   const [isOpenNavLinks, setIsOpenNavLinks] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { user, logout, isLoading } = useContext(authUserContext);
+  const { countItems } = useContext(itemsCartContext);
 
   if (isLoading) return <Loading />;
 
@@ -28,6 +31,7 @@ function Navbar() {
               {[
                 { to: "", label: "الرئيسيه" },
                 { to: "/books", label: "الكتب" },
+                { to: "/shopping", label: "المشتريات" },
                 ...(user?.isAdmin
                   ? [{ to: "/dashboard", label: "لوحه التحكم" }]
                   : []),
@@ -68,19 +72,36 @@ function Navbar() {
                 تسجيل الدخول
               </Link>
             )}
+
+            {/* Cart */}
+            <div className="relative text-2xl w-12 h-12 flex justify-center items-center">
+              <MdOutlineShoppingCart />
+              <span className="absolute top-0 -right-1 text-sm font-semibold text-(--primary-color)">
+                {countItems}
+              </span>
+            </div>
           </div>
 
           {/* Hamburger - Mobile */}
-          <motion.button
-            initial={false}
-            animate={{ rotate: isOpenNavLinks ? 90 : 0 }}
-            transition={{ duration: 0.25 }}
-            className="text-2xl lg:hidden cursor-pointer p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
-            onClick={() => setIsOpenNavLinks(!isOpenNavLinks)}
-            aria-label="Toggle menu"
-          >
-            {isOpenNavLinks ? <IoCloseSharp /> : <FiMenu />}
-          </motion.button>
+          <div className="flex items-center lg:hidden ">
+            <motion.button
+              initial={false}
+              animate={{ rotate: isOpenNavLinks ? 90 : 0 }}
+              transition={{ duration: 0.25 }}
+              className="text-2xl cursor-pointer p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
+              onClick={() => setIsOpenNavLinks(!isOpenNavLinks)}
+              aria-label="Toggle menu"
+            >
+              {isOpenNavLinks ? <IoCloseSharp /> : <FiMenu />}
+            </motion.button>
+            {/* Cart */}
+            <div className="relative text-2xl w-12 h-12 flex justify-center items-center">
+              <MdOutlineShoppingCart />
+              <span className="absolute top-0 -right-1 text-sm font-semibold text-(--primary-color)">
+                {countItems}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -102,6 +123,7 @@ function Navbar() {
                     {[
                       { to: "", label: "الرئيسيه" },
                       { to: "/books", label: "الكتب" },
+                      { to: "/shopping", label: "المشتريات" },
                       ...(user?.isAdmin
                         ? [{ to: "/dashboard", label: "لوحه التحكم" }]
                         : []),

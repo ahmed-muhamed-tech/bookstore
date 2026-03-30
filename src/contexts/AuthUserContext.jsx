@@ -85,8 +85,6 @@ const AuthUserProvider = ({ children }) => {
     };
   }, []);
 
-
-
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(initialDataUser);

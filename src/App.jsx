@@ -9,6 +9,8 @@ import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
 import PrivateRoute from "./contexts/PrivateRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Shopping from "./pages/Shopping";
+import ItemsCartProvider from "./contexts/itemsCartContext";
 const App = () => {
   const routing = createBrowserRouter([
     {
@@ -29,6 +31,7 @@ const App = () => {
           ),
         },
         { path: "/detailsBook/:id", element: <DetailsBook /> },
+        { path: "/shopping", element: <Shopping /> },
         { path: "/login", element: <Login /> },
         { path: "*", element: <NotFound /> },
       ],
@@ -37,8 +40,10 @@ const App = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={routing} />
-      <ToastContainer position="bottom-right" />
+      <ItemsCartProvider>
+        <RouterProvider router={routing} />
+        <ToastContainer position="bottom-right" />
+      </ItemsCartProvider>
     </QueryClientProvider>
   );
 };

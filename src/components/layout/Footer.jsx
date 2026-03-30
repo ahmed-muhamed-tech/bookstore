@@ -6,7 +6,8 @@ import {
   FaLinkedinIn,
   FaGithub,
   FaArrowUp,
-  FaGoogle, // ✅ أيقونة الجيميل/جوجل
+  FaGoogle,
+  FaGlobe, // ✅ أيقونة الجيميل/جوجل
 } from "react-icons/fa";
 
 function Footer() {
@@ -45,7 +46,7 @@ function Footer() {
               {["من نحن", "اتصل بنا", "بطاقات الهدايا"].map((link, index) => (
                 <li key={index}>
                   <button
-                    onClick={()=> setIsPopupOpen(true)}
+                    onClick={() => setIsPopupOpen(true)}
                     className="group flex items-center gap-2 text-sm md:text-base font-medium text-gray-600 hover:text-(--primary-color) transition-all duration-300"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-(--primary-color)/40 group-hover:bg-(--primary-color) transition-colors" />
@@ -73,7 +74,7 @@ function Footer() {
               ].map((link, index) => (
                 <li key={index}>
                   <button
-                    onClick={()=> setIsPopupOpen(true)}
+                    onClick={() => setIsPopupOpen(true)}
                     className="group flex items-center gap-2 text-sm md:text-base font-medium text-gray-600 hover:text-(--primary-color) transition-all duration-300"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-(--primary-color)/40 group-hover:bg-(--primary-color) transition-colors" />
@@ -118,19 +119,20 @@ function Footer() {
               <div className="flex items-center gap-3">
                 {/* ✉️ Gmail */}
                 <a
-                  href="mailto:ahmed.code.rex@gmail.com"
-                  target="_blanck"
+                  href="https://portfolio-695c6.web.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group p-3 rounded-xl bg-[#EA4335]/10 hover:bg-[#EA4335] text-[#EA4335] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1"
-                  aria-label="أرسل لي عبر البريد الإلكتروني"
-                  title="أرسل لي إيميل"
+                  aria-label="زيارة موقعي"
+                  title="موقعي الشخصي"
                 >
-                  <FaGoogle className="text-xl" />
+                  <FaGlobe className="text-xl" />
                 </a>
 
                 {/* 💼 LinkedIn */}
                 <a
-                  href="www.linkedin.com/in/ahmed-mohamed-b54bb336a"
-                  target="_blanck"
+                  href="https://www.linkedin.com/in/ahmed-mohamed-b54bb336a"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="group p-3 rounded-xl bg-[#0A66C2]/10 hover:bg-[#0A66C2] text-[#0A66C2] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1"
                   aria-label="ملفي على LinkedIn"
@@ -141,8 +143,8 @@ function Footer() {
 
                 {/* 💻 GitHub */}
                 <a
-                  href="https://github.com/ahmedcoderex"
-                  target="_blanck"
+                  href="https://github.com/ahmed-muhamed-tech"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="group p-3 rounded-xl bg-gray-800/10 hover:bg-gray-800 text-gray-700 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1"
                   aria-label="ملفي على GitHub"
@@ -177,7 +179,7 @@ function Footer() {
           <p className="flex items-center gap-2 text-center flex-wrap justify-center">
             <span>صُمم وبرمج بـ ❤️ بواسطة</span>
             <a
-              href="https://linkedin.com/in/ahmed-mohamed"
+              href="https://www.linkedin.com/in/ahmed-mohamed-b54bb336a"
               target="_blank"
               rel="noopener noreferrer"
               className="font-bold text-(--primary-color) hover:text-(--primary-color)/80 transition-colors underline-offset-4 hover:underline"
@@ -188,24 +190,24 @@ function Footer() {
             {/* أيقونات صغيرة بجانب الاسم في الشريط السفلي */}
             <span className="flex items-center gap-1 mr-2">
               <a
-                href="mailto:ahmed.code.rex@gmail.com"
-                target="_blanck"
+                href="https://portfolio-695c6.web.app/"
+                target="_blank"
                 className="text-[#EA4335] hover:scale-110 transition-transform"
                 title="إيميل"
               >
-                <FaGoogle className="text-xs" />
+                <FaGlobe className="text-xs" />
               </a>
               <a
-                href="www.linkedin.com/in/ahmed-mohamed-b54bb336a"
-                target="_blanck"
+                href="https://www.linkedin.com/in/ahmed-mohamed-b54bb336a"
+                target="_blank"
                 className="text-[#0A66C2] hover:scale-110 transition-transform"
                 title="LinkedIn"
               >
                 <FaLinkedinIn className="text-xs" />
               </a>
               <a
-                href="https://github.com/ahmedcoderex"
-                target="_blanck"
+                href="https://github.com/ahmed-muhamed-tech"
+                target="_blank"
                 className="text-gray-700 hover:scale-110 transition-transform"
                 title="GitHub"
               >
