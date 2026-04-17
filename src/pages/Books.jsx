@@ -19,15 +19,12 @@ function Books() {
   const { isLoadingCategories, categories } = useCategories();
 
   if (isLoadingCategories) return <Loading text="جاري تحميل التصنيفات" />;
-  if (isLoading) return <Loading text="جاري تحميل الكتب" />;
 
   // تحديد عدد التصنيفات الظاهرة في البداية
   const initialCount = 6;
   const displayedCategories = showMoreCategories
     ? categories
     : categories?.slice(0, initialCount);
-
-    console.log(typeBooks)
 
   return (
     <section className="py-12 bg-gray-50 min-h-screen">
@@ -57,7 +54,7 @@ function Books() {
                 <button
                   onClick={() => setTypeBooks("الكل")}
                   className={`w-full text-right px-4 py-3 rounded-xl transition-all duration-300 text-sm font-medium ${
-                    typeBooks === "الكل" 
+                    typeBooks === "الكل"
                       ? "bg-(--primary-color) text-white shadow-md shadow-blue-100 translate-x-1"
                       : "text-gray-600 hover:bg-gray-50 hover:text-(--primary-color)"
                   }`}
@@ -106,14 +103,18 @@ function Books() {
 
           {/* Main Content - عرض الكتب */}
           <main className="lg:col-span-9">
-            <div
-              className={`${
-                allBooks.length > 0
-                  ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
-                  : "flex flex-col items-center justify-center py-20"
-              }`}
-            >
-              {allBooks.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {isLoading ? (
+                [...Array(10)].map((_, index) => (
+                  <div className="animate-pulse" key={index}>
+                    <div className=" p-4 rounded-xl animate-pulse">
+                      <div className="bg-gray-300 h-32 w-full rounded-md mb-3"></div>
+                      <div className="bg-gray-300 h-4 w-3/4 mb-2 rounded"></div>
+                      <div className="bg-gray-300 h-3 w-1/2 rounded"></div>
+                    </div>
+                  </div>
+                ))
+              ) : allBooks.length > 0 ? (
                 allBooks.map((book, index) => (
                   <CardBook
                     key={book.id}
